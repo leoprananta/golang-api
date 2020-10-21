@@ -20,3 +20,25 @@ func GetAllMahasiswa(c *gin.Context)  {
 	db.Find(&mhs)
 	c.JSON(http.StatusOK, gin.H{"data":mhs})
 }
+
+//create mahasiswa
+func CreateMahasiswa(c *gin.Context)  {
+	db := c.MustGet("db").(*gorm.DB)
+
+	//validation input
+	var dataInput MahasiswaInput
+	if err := c.ShouldBindJSON(&dataInput); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"Error":err.Error()})
+		return
+	}
+
+	//input process
+	mhs := models.Mahasiswa{
+		NIM : dataInput.Nim,
+		Nama : dataInput.Nama,
+	}
+
+	db.Create(&mhs)
+
+	c.JSON(http.StatusOK, gin.H{"data":mhs})
+}
