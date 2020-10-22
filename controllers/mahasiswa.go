@@ -25,7 +25,7 @@ func GetAllMahasiswa(c *gin.Context)  {
 func CreateMahasiswa(c *gin.Context)  {
 	db := c.MustGet("db").(*gorm.DB)
 
-	//validation input
+	//input validation
 	var dataInput MahasiswaInput
 	if err := c.ShouldBindJSON(&dataInput); err != nil{
 		c.JSON(http.StatusBadRequest, gin.H{"Error":err.Error()})
@@ -39,6 +39,32 @@ func CreateMahasiswa(c *gin.Context)  {
 	}
 
 	db.Create(&mhs)
+
+	c.JSON(http.StatusOK, gin.H{"data":mhs})
+}
+
+//update mahasiswa
+func UpdateMahasiswa(c *gin.Context)  {
+	db := c.MustGet("db").(*gorm.DB)
+
+	// err != nil = error tidak sama dengan nil atau ada error
+
+	// check exsisting data
+	var mhs models.Mahasiswa
+	if err := db.Where("nim = ?", c.Param("nim")).First(&mhs).Error; err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"Error":"Data not found"})
+		return
+	}
+
+	//input validation
+	var dataInput MahasiswaInput
+	if err := c.ShouldBindJSON(&dataInput); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"Error":err.Error()})
+		return
+	}
+
+	//update process
+	db.Model(&mhs).Update(dataInput)
 
 	c.JSON(http.StatusOK, gin.H{"data":mhs})
 }

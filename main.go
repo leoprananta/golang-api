@@ -23,6 +23,7 @@ func main(){
 
 	r.GET("/mahasiswa", controllers.GetAllMahasiswa)
 	r.POST("/mahasiswa", controllers.CreateMahasiswa)
+	r.PUT("/mahasiswa/:nim", controllers.UpdateMahasiswa)
 
 	r.Run()
 }
