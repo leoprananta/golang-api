@@ -68,3 +68,22 @@ func UpdateMahasiswa(c *gin.Context)  {
 
 	c.JSON(http.StatusOK, gin.H{"data":mhs})
 }
+
+//delete mahasiswa
+func DeleteMahasiswa(c *gin.Context)  {
+	db := c.MustGet("db").(*gorm.DB)
+
+	// err != nil = error tidak sama dengan nil atau ada error
+
+	// check exsisting data
+	var mhs models.Mahasiswa
+	if err := db.Where("nim = ?", c.Param("nim")).First(&mhs).Error; err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"Error":"Data not found"})
+		return
+	}
+
+	//delete process
+	db.Delete(&mhs)
+
+	c.JSON(http.StatusOK, gin.H{"data":true})
+}
